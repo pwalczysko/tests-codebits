@@ -3,10 +3,10 @@ import argparse
 import xml.etree.ElementTree as ET
 import csv
 
-tree = ET.parse("Index2.xml")
+tree = ET.parse("Index.xml")
 root = tree.getroot()
 
-def show_data_well_based (plate, well):
+def show_data_well_based (plate, well, root):
     # need to parse the well value to get the numerical value
     column = well[1:]
     letter = well[0]
@@ -16,10 +16,13 @@ def show_data_well_based (plate, well):
     else:
         well_num = "r0"+str(ordinal)+"c"+column
     print ("Images in the Well:", well)
-    for item in root.iter('Images'):
-        for URL in item.iter("URL"):
-            if well_num in URL.text:
-                print (URL.text)
+    # for item in root.iter('Images'):
+    #     for URL in item.iter("URL"):
+    #         if well_num in URL.text:
+    #             print (URL.text)
+    for el in root.iter():
+        if well_num in el.text:
+            print (el.text)
 
     with open("ML-BE001-kvp.csv", "r") as f:
         f = csv.DictReader(f)
@@ -29,10 +32,10 @@ def show_data_well_based (plate, well):
                 print ("These are the metadata associated with the images in this Well")
                 print (csv_row)
 
-def run(plate, well, imagename):
+def run(plate, well, imagename, root):
 
     if well != "":
-       show_data_well_based (plate, well) 
+       show_data_well_based (plate, well, root) 
     
     if (imagename != "") and (well == ""):
         well_num = imagename[0:6]
